@@ -1,0 +1,137 @@
+<div class='container-fluid' *ngIf="loggedInUserDataFromDB!=null && selectedMeeting!=null">
+    <div *ngIf="loggedInUserDataFromDB.Role=='Chair' || loggedInUserDataFromDB.Role=='Faculty'">
+    
+    <!--<div class="container" *ngIf="downloadURL | async; let url">
+        <img [src]="url" alt="Image from AngularFireStorage">
+      </div>-->
+      <div *ngIf="loggedInUserDataFromDB.Role=='Chair'" class="float-right">
+          <button [disabled]="selectedMeeting.finalised" (click)="deleteMeeting()">Delete Meeting</button>
+          <button [disabled]="selectedMeeting.finalised || editingVariable" (click)="editMeeting()">Edit Meeting</button>
+          <button [disabled]="selectedMeeting.finalised || !editingVariable" (click)="saveChanges()">Save Changes</button>
+      </div>
+
+    <h3>Subject:<input [(ngModel)]="selectedMeeting.subject" [ngClass]="{styleForInput:!editingVariable || selectedMeeting.finalised}" [readonly]="!editingVariable || selectedMeeting.finalised" type="text"></h3>
+    <h6>Date:<input [(ngModel)]="selectedMeeting.date" [ngClass]="{styleForInput:!editingVariable || selectedMeeting.finalised}" [readonly]="!editingVariable || selectedMeeting.finalised" type="text"></h6>
+    <h6>Time:<input [(ngModel)]="selectedMeeting.time" [ngClass]="{styleForInput:!editingVariable || selectedMeeting.finalised}" [readonly]="!editingVariable || selectedMeeting.finalised" type="text"></h6>
+    <h6>Duration:<input [(ngModel)]="selectedMeeting.duration" [ngClass]="{styleForInput:!editingVariable || selectedMeeting.finalised}" [readonly]="!editingVariable || selectedMeeting.finalised" type="text"></h6>
+    <h6>Department:{{selectedMeeting.department}}</h6>
+    <h6>Facilitated by:<input [(ngModel)]="selectedMeeting.facilitatedBy" [ngClass]="{styleForInput:!editingVariable || selectedMeeting.finalised}" [readonly]="!editingVariable || selectedMeeting.finalised" type="text"></h6>
+    <h6>Agenda List: </h6>
+    <!--Looping into AgendaList-->
+    <div *ngFor="let item of agendaList;index as i">
+        <h6>{{i+1}}.{{item.agenda}}</h6>
+        <textarea *ngIf="item.subAgendaItems.length ==0 "class="col-md-11" width='100%' rows="5"
+               [readonly]="loggedInUserDataFromDB.Role=='Faculty' || selectedMeeting.finalised" name="{{i}}meetingMinutes"
+               [(ngModel)]="item.meetingMinutes"></textarea>
+        <!--Looping into subAgenda List-->
+        <div *ngFor="let subAgendaItem of item.subAgendaItems;index as j">
+            <h6>{{i+1}}.{{j+1}}.{{subAgendaItem.subAgenda}}</h6>
+           <textarea *ngIf="subAgendaItem.subOfSubAgendaItems.length ==0 "class="col-md-11" width='100%' rows="5"
+               [readonly]="loggedInUserDataFromDB.Role=='Faculty' || selectedMeeting.finalised" name="{{i}}{{j}}meetingMinutes"
+               [(ngModel)]="subAgendaItem.meetingMinutes"></textarea>
+           <!-- Looping into sub of sub agendaItems-->
+           <div *ngFor="let subOfSubAgendaItem of subAgendaItem.subOfSubAgendaItems;index as k">
+               <h6>{{i+1}}.{{j+1}}.{{k+1}}.{{subOfSubAgendaItem.subofSubAgenda}}</h6>
+               <textarea class="col-md-11" width='100%' rows="5"
+               [readonly]="loggedInUserDataFromDB.Role=='Faculty' || selectedMeeting.finalised" name="{{i}}{{j}}{{k}}meetingMinutes"
+               [(ngModel)]="subOfSubAgendaItem.meetingMinutes"></textarea>
+           </div>
+        </div>
+       <!-- <textarea class="col-md-11" width='100%' rows="5"
+            [readonly]="loggedInUserDataFromDB.Role=='Faculty' || selectedMeeting.finalised" name="{{item.id}}meetingMinutes"
+            [(ngModel)]="item.meetingMinutes"></textarea>-->
+    </div>
+    <div *ngIf="loggedInUserDataFromDB.Role=='Chair'">
+        <button [disabled]="selectedMeeting.finalised" (click)=showAddMeetingMinutesForm()>Save meeting minutes</button>
+        <button [disabled]="selectedMeeting.finalised" (click)=saveMeetingMinutesAndSendEmail()>Save and Send Email</button>
+        <button [disabled]="selectedMeeting.finalised" (click)=finaliseMeetingMinutes() class="btn btn-primary">Finalise</button>
+    </div>
+        <h6>Approvals:{{selectedMeeting.approvals.length}} Rejects:{{selectedMeeting.rejects.length}}</h6>
+        <h5>Comment section:</h5>
+        <div *ngFor="let item of selectedMeeting.comments; index as i ">
+            <p>{{i+1}}. {{item}} </p>
+
+        </div>
+    
+    <div *ngIf="loggedInUserDataFromDB.Role=='Faculty'">
+        <div>
+        <button (click)=approveButtonClicked()>Approve</button>
+        <button (click)=rejectButtonClicked()>Reject</button>
+    </div>
+        <textarea [(ngModel)]="comment" *ngIf="rejectClicked" class="col-md-10" rows="2" placeholder="Input Comment"></textarea>
+    </div>
+    <div *ngIf="rejectClicked">
+        <button (click)=cancelCommentSection()>Cancel</button>
+        <button (click)=saveComment()>Done</button>
+    </div>
+    <div *ngIf="loggedInUserDataFromDB.Role=='Chair'">
+        <h6>Attendance:</h6>
+         <!-- <p-multiSelect [options]="usersForAttendance" [(ngModel)]="selectedMeeting.attendees" [filter]="true" [panelStyle]="{minWidth:'12em'}">
+            <ng-template let-attendees pTemplate="selectedItems"> -->
+                <!--<span *ngFor="let selectedUser of attendees">{{userForAttendance.firstName}}</span>-->
+            <!-- </ng-template>
+            <ng-template let-userForAttendance let-i="index" pTemplate="item">
+                {{i}}
+                <div style="font-size:14px;float:right;margin-top:4px">{{userForAttendance.lastName}}</div>
+            </ng-template>
+        </p-multiSelect>
+        <p>Attendees: {{selectedMeeting.attendees}}</p>-->
+        <mat-form-field>
+            <mat-label>Attendance</mat-label>
+            <mat-select [formControl]="attendance" multiple [(ngModel)]="selectedMeeting.attendees">
+                <mat-option  (click)=selectingAllForAttendance() [value]='isempty'>SelectAll</mat-option>
+              <mat-option  *ngFor="let selectedUser of dataForAttendance;index as i" [value]='selectedUser.emailId'>{{selectedUser.firstName}} {{selectedUser.lastName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button [disabled]="selectedMeeting.finalised" (click)=updatingAttendanceToDataBase()>Save Attendance</button>
+          <h6>Attendees:</h6>
+          <p *ngFor="let attendee of selectedMeeting.attendees ; index as i">{{i+1}}. {{attendee}}</p>
+          <!-----------------------------------------------
+          <ng-multiselect-dropdown-angular7 
+          [data]="dataForAttendance" 
+          [(ngModel)]="selectedMeeting.attendees" 
+          [settings]="dropDownSettings"
+          (onSelect)="onItemSelect($event)"
+          (onSelectAll)="onSelectAll($event)">
+
+            </ng-multiselect-dropdown-angular7>-->
+              
+          
+          <!--<p-multiSelect [options]="dataForAttendance" [(ngModel)]="selectedMeeting.attendees" [panelStyle]="{minWidth:'12em'}">
+            <ng-template let-value pTemplate="selectedItems">
+                <div *ngFor="let val of value" class="ui-multiselected-item-token ui-corner-all">
+                    <span>{{val}}</span>
+                </div>
+                <span *ngIf="!value || value.length === 0" class="ui-multiselected-empty-token ui-corner-all">Choose</span>
+            </ng-template>
+            <ng-template let-car pTemplate="item">
+                <img src="assets/showcase/images/demo/car/{{car.label}}.png" style="width:24px;vertical-align:middle" />
+                <div style="font-size:14px;float:right;margin-top:4px">{{car.label}}</div>
+            </ng-template>
+        </p-multiSelect>
+        <p>Selected Cars: {{selectedMeeting.attendees}}</p>-->
+    </div>
+    <h5>Files available:</h5>
+    <!-- <div *ngFor="let file of selectedMeeting.downloadFiles | keyvalue ;index as i">
+    {{i+1}}.{{file.key}}: Click <a href="#" (click)=open(file.value)>here</a> to view
+    <i (click)=deleteFile(file.key,i) class="far fa-times-circle"></i>
+    </div> -->
+    <div *ngFor="let file of selectedMeeting.downloadFiles ;index as i">
+        {{i+1}}.{{file.uniqueNameForReference}}: Click <a style="color:#0000FF;" (click)=open(file.linkToView)>here</a> to view
+        <i *ngIf="loggedInUserDataFromDB.Role=='Chair'" (click)=deleteFile(file.uniqueNameForReference,i) class="far fa-times-circle"></i>
+        <i class="fas fa-file-download ml-3" (click)=downloadFile(file.uniqueNameForReference,file.linkToView,file.typeOfFile)></i>
+        </div>
+    <input *ngIf="loggedInUserDataFromDB.Role=='Chair'" type="file" (change)="uploadFile($event)" accept=".txt,.pdf,.doc,.docx">
+</div>
+
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+</div>
+<div *ngIf="loggedInUserDataFromDB!=null && loggedInUserDataFromDB.Role=='Admin'">
+    <h4 style="color: red;" class="px-4">*You do not have access</h4>
+  </div>
+<div *ngIf="loggedInUserDataFromDB!=null && (loggedInUserDataFromDB.Role=='Chair' || loggedInUserDataFromDB.Role=='Faculty') && selectedMeeting==null">
+    <h4 style="color: red;" class="px-4">*No meeting is selected</h4>
+</div>
+
+

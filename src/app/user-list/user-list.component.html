@@ -1,0 +1,159 @@
+<div [ngClass]='loggedInUserDataFromDB!=null ? "visible": "hidden" '>
+<div [hidden]="loggedInUserDataFromDB.Role!='Admin'">
+<button type="button" class="btn btn-primary float-right" (click)="addUser()">Add user</button>
+
+<!--<div class="card" style="width: 38rem;" *ngFor="let user of users">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">{{user.firstName}} {{user.lastName}} {{user.department}} {{user.Role}}
+       <! <popup>"Are you sure?</popup>->
+        <button type="button" class="btn btn-primary float-right" (click)="deleteUser(user)">Delete user</button>
+        <button class="btn float-right" (click)="editButtonClicked(user)">Edit</button>
+      </li> 
+    </ul>
+  </div>-->
+<div [hidden]="showAddUserForm" class="container-fluid">
+  <div class="container">
+    <mat-form-field class="StyleForSearch">
+      <mat-label>Search</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. First name">
+    </mat-form-field>
+  </div>
+
+  <table mat-table [dataSource]="users" matSort class="datatable mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="Action">
+      <th mat-header-cell *matHeaderCellDef > Action </th>
+      <td mat-cell *matCellDef="let element"> <i class=" m-2 fas fa-user-edit" (click)="editButtonClicked(element)"></i>
+        <i class="m-2 far fa-trash-alt" (click)="deleteUser(element)"></i></td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> First Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="Role">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Role </th>
+      <td mat-cell *matCellDef="let element"> {{element.Role}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="emailId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Email Id </th>
+      <td mat-cell *matCellDef="let element"> {{element.emailId}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="department">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Program </th>
+      <td mat-cell *matCellDef="let element"> {{element.department}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+
+
+<!--Create User Form-->
+<div class="m-5 card">
+  <form class="m-5" *ngIf="showAddUserForm" #userForm="ngForm">
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="">First and last name</span>
+      </div>
+      <input required #firstName="ngModel" [(ngModel)]="addUserObject.firstName" name="firstName" type="text"
+        class="form-control">
+      <input required #lastName="ngModel" [(ngModel)]="addUserObject.lastName" name="lastName" type="text"
+        class="form-control">
+    </div>
+    <div class="alert alert-danger"
+      *ngIf="(firstName.touched && !firstName.valid)||(lastName.touched && !lastName.valid)">*First and last names are
+      required</div>
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Email address</label>
+      <input required #email="ngModel" [(ngModel)]="addUserObject.email" name="email" type="email" class="form-control"
+        id="exampleFormControlInput1" placeholder="name@example.com">
+      <div class="alert alert-danger" *ngIf="(email.touched && !email.valid)">*Email Id is required</div>
+     <!-- <div *ngFor="let emailIterator of usersEmailIdsForValidation">
+      <div class="alert alert-danger" *ngIf="emailIterator==addUserObject.email">*Email id is already taken</div>
+    </div>-->
+    <div class="alert alert-danger" *ngIf="email.touched && usersEmailIdsForValidation.includes(addUserObject.email)">*Email id is already taken</div>
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlSelect1">Role</label>
+      <select required #role="ngModel" [(ngModel)]="addUserObject.role" name="role" class="form-control"
+        id="exampleFormControlSelect1">
+        <option *ngFor="let role of roles">{{role}}</option>
+      </select>
+      <div class="alert alert-danger" *ngIf="(role.touched && !role.valid)">*Role is required</div>
+    </div>
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="exampleCheck1" [(ngModel)]="addUserObject.admissionApplicationReviewer" name="admissionApplicationReviewer">
+      <label class="form-check-label" for="exampleCheck1">Check if User is a Admission Application Reviewer</label>
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlSelect1">Department</label>
+      <select required #department="ngModel" [(ngModel)]="addUserObject.department" name="department"
+        class="form-control" id="exampleFormControlSelect1">
+        <option *ngFor="let department of departments">{{department}}</option>
+      </select>
+      <div class="alert alert-danger" *ngIf="(department.touched && !department.valid)">*Department is required</div>
+    </div>
+    <button [disabled]="!firstName.valid || !lastName.valid || !email.valid || !role.valid || !department.valid || (email.touched && usersEmailIdsForValidation.includes(addUserObject.email))" *ngIf="showAddUserForm" class="btn btn-primary" (click)="submitToSaveUser()">Save</button>
+    <button *ngIf="showAddUserForm" class="btn" (click)="cancel()">cancel</button>
+  </form>
+  <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+</div>
+</div>
+
+<!--Throwing Error Message if user hardcode's link in the google url tab-->
+<div *ngIf="loggedInUserDataFromDB.Role=='Faculty' || loggedInUserDataFromDB.Role=='Chair'">
+  <h4 style="color: red;" class="px-4">*You do not have access</h4>
+</div>
+</div>
+<!--
+      [disabled]="firstName.valid||lastName.valid||email.valid||role.valid||department.valid"
+    Update user form
+  <form *ngIf="showUpdateUserForm">
+    <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="">First and last name</span>
+        </div>
+        <input [(ngModel)]="updateUserObject.firstName" name= "firstName"type="text" class="form-control">
+        <input [(ngModel)]="updateUserObject.lastName" name= "lastName" type="text" class="form-control">
+      </div>
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Email address</label>
+      <input [(ngModel)] ="updateUserObject.email" name= "email" type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlSelect1">Role</label>
+      <select [(ngModel)]="updateUserObject.role" name= "role"class="form-control" id="exampleFormControlSelect1">
+        <option>Chair</option>
+        <option>Faculty</option>
+        <option>Admin</option>
+      </select>
+    </div>
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Department</label>
+        <select [(ngModel)]="updateUserObject.department" name= "department"class="form-control" id="exampleFormControlSelect1">
+          <option>CS</option>
+          <option>CIS</option>
+          <option>IT</option>
+          <option>DS</option>
+        </select>
+      </div>
+  </form>
+  <button *ngIf="showUpdateUserForm" class="btn btn-primary"(click)="updateButtonClicked()">Update</button>
+-->

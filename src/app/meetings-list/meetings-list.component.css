@@ -1,0 +1,15 @@
+.datatable{
+    width:100%;
+}
+.descriptionStyle{
+    word-wrap: break-word ;
+}
+.StyleForSearch{
+    width:100%;
+}
+.pointer {
+    cursor: pointer;
+}
+th.mat-sort-header-sorted {
+    color: black;
+  }

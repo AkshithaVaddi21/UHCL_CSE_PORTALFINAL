@@ -1,0 +1,36 @@
+
+<nav  class="navbar navbar-expand-lg navbar-dark bg-dark"> 
+    
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li  class="nav-item " routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+          <a class="nav-link" routerLink="">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <div  *ngIf="loggedInUserDataFromDB!=null">
+        <li *ngIf="loggedInUserDataFromDB.Role=='Admin' " class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+          <a class="nav-link" routerLink="/Users">Users</a>
+        </li>
+      </div>
+      <div  *ngIf="loggedInUserDataFromDB!=null">
+        <li  *ngIf="loggedInUserDataFromDB.Role=='Faculty' || loggedInUserDataFromDB.Role=='Chair'" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+          <a class="nav-link" routerLink="/MeetingsList">Meetings</a>
+        </li>
+      </div>
+      <div  *ngIf="loggedInUserDataFromDB!=null">
+        <li *ngIf="loggedInUserDataFromDB.Role=='Admission' || loggedInUserDataFromDB.admissionApplicationReviewer==true" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+          <a class="nav-link" routerLink="/Admissions">Admissions</a>
+        </li>
+      </div>
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <div  *ngIf="loggedInUserDataFromDB!=null">
+        <h6 class="navbar-text" >{{loggedInUserDataFromDB.firstName}} {{loggedInUserDataFromDB.lastName}}: {{loggedInUserDataFromDB.Role}}  </h6>
+      </div>
+        <button (click)=logout() class="btn btn-outline-success my-2 my-sm-0" type="submit">logout</button>
+      </form>
+    </div>
+  </nav>

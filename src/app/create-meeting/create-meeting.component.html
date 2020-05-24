@@ -1,0 +1,199 @@
+
+<div class="m-5 card">
+  <form class="m-5">
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Subject</label>
+      <input required #subject="ngModel" [(ngModel)]="createMeetingModelObject.subject" name="subject" type="text" class="form-control"
+        id="exampleFormControlInput1" placeholder="Input subject">
+    </div>
+    <div class="alert alert-danger"
+    *ngIf="(subject.touched && !subject.valid)">*Subject is required
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Date: </label>
+      <mat-form-field>
+        <mat-label>Choose a date</mat-label>
+        <input required #date="ngModel" [(ngModel)]="createMeetingModelObject.date" format="YYYY/MM/DD"
+         name="date" matInput [matDatepicker]="picker">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="alert alert-danger"
+    *ngIf="(date.touched && !date.valid)">*Date is required
+    </div>
+    <div class="form-group">
+      <div class="row">
+        <div class="col-md-3">
+          <label for="exampleFormControlSelect1">HH:</label>
+          <select required #HH="ngModel" [(ngModel)]="createMeetingModelObject.HH" name="HH" class="form-control" id="exampleFormControlSelect1">
+            <option *ngFor="let time of ['01','02','03','04','05','06','07','08','09','10','11','12']">{{time}}</option>
+          </select>
+          <div class="alert alert-danger"
+    *ngIf="(HH.touched && !HH.valid)">*HH is required
+    </div>
+        </div>
+        <div class="col-md-3">
+          <label for="exampleFormControlSelect1">MM:</label>
+          <select required #MM="ngModel" [(ngModel)]="createMeetingModelObject.MM" name="MM" class="form-control" id="exampleFormControlSelect2">
+            <option *ngFor="let time of ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16
+            ','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','
+            36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54
+            ','55','56','57','58','59']">{{time}}</option>
+          </select>
+          <div class="alert alert-danger"
+    *ngIf="(MM.touched && !MM.valid)">*MM is required
+    </div>
+        </div>
+        <div class="col-md-3">
+          <label for="exampleFormControlSelect1">AM/PM:</label>
+        <select required #noon="ngModel" [(ngModel)]="createMeetingModelObject.noon" name="noon" class="form-control" id="exampleFormControlSelect3">
+          <option *ngFor="let time of ['AM','PM']">{{time}}</option>
+        </select>
+        <div class="alert alert-danger"
+    *ngIf="(noon.touched && !noon.valid)">*Noon is required
+    </div>
+        </div>
+        <div class="col-md-3">
+          <label for="exampleFormControlSelect1">Duration(in minutes):</label>
+        <select required #duration="ngModel" [(ngModel)]="createMeetingModelObject.duration" name="duration" class="form-control" id="exampleFormControlSelect4">
+          <option *ngFor="let time of ['30','45','60','90','120','180']">{{time}}</option>
+        </select>
+        <div class="alert alert-danger"
+    *ngIf="(duration.touched && !duration.valid)">*duration is required
+    </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Facilitated By</label>
+      <select required #facilitatedBy="ngModel" [(ngModel)]="createMeetingModelObject.facilitatedBy" name="facilitatedBy" type="text" class="form-control"
+        id="exampleFormControlInput1" placeholder="Input Facilitator">
+        <option *ngFor="let chair of chairs" [value]="chair">{{chair}}</option>
+      </select>
+    </div>
+    <div class="alert alert-danger"
+    *ngIf="(facilitatedBy.touched && !facilitatedBy.valid)">*Facilitated by is required
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlInput1">programs: </label>
+      <div class="form-check form-check-inline">
+        <input  class="form-check-input" (change)="onCheck($event)"
+          [(ngModel)]="createMeetingModelObject.inlineCheckbox1" name="inlineCheckbox1" type="checkbox"
+          id="inlineCheckbox1" value="option1">
+        <label class="form-check-label" for="inlineCheckbox1">All</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input"
+          [(ngModel)]="createMeetingModelObject.inlineCheckbox2" name="inlineCheckbox2" type="checkbox"
+          id="inlineCheckbox2" value="option2" [disabled]="disableCheckBox">
+        <label class="form-check-label" for="inlineCheckbox2">CS</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input"
+          [(ngModel)]="createMeetingModelObject.inlineCheckbox3" name="inlineCheckbox3" type="checkbox"
+          id="inlineCheckbox3" value="option3" [disabled]="disableCheckBox">
+        <label class="form-check-label" for="inlineCheckbox3">CIS</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input"
+          [(ngModel)]="createMeetingModelObject.inlineCheckbox4" name="inlineCheckbox4" type="checkbox"
+          id="inlineCheckbox4" value="option4" [disabled]="disableCheckBox">
+        <label class="form-check-label" for="inlineCheckbox4">IT</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input"
+          [(ngModel)]="createMeetingModelObject.inlineCheckbox5" name="inlineCheckbox5" type="checkbox"
+          id="inlineCheckbox5" value="option5" [disabled]="disableCheckBox">
+        <label class="form-check-label" for="inlineCheckbox5">DS</label>
+      </div>
+    </div>
+    <div class="alert alert-danger"
+    *ngIf="(!createMeetingModelObject.inlineCheckbox1 && !createMeetingModelObject.inlineCheckbox2
+    &&!createMeetingModelObject.inlineCheckbox3 && !createMeetingModelObject.inlineCheckbox4
+    && !createMeetingModelObject.inlineCheckbox5)">*Program is required
+    </div>
+
+    <div class='form-group'>
+      <label>Choose, after how many days you want to send an email alert repeatedly </label>
+      <select required #daysForEmailAlert='ngModel' [(ngModel)]='createMeetingModelObject.daysForEmailAlert'
+      name='daysForEmailAlert' class="form-control" id="exampleFormControlSelect5" >
+      <option *ngFor="let daysForEmailAlert of ['1','2','3','4','5','6','7','8','9','10']">{{daysForEmailAlert}}</option>
+
+      </select>
+      <div class="alert alert-danger" *ngIf="(daysForEmailAlert.touched && !daysForEmailAlert.valid)">*Days for Email Alert is required
+      </div>
+
+</div>
+
+    <div class="form-group">
+      <label for="exampleFormControlInput1"> Agenda</label>
+      <!--Looping into Agenda Main Array-->
+      <div class ="row" *ngFor="let item of items; index as j">
+        <div class="col-md-9">
+          <label for="exampleFormControlInput1"> Agenda item</label>
+        <textarea required #itemId="ngModel" [(ngModel)]="item.agenda" name="{{item.id}}agenda" type="text" class="form-control"
+         placeholder="Input Agenda" rows=1></textarea>
+
+         <div class="alert alert-danger"
+          *ngIf="(itemId.touched && item.agenda=='')">*Agenda Item is required
+          </div>
+
+           <!--Looping into subAgenda Array-->
+          <div class="row" *ngFor="let subItem of subagendaItemsarray[j];index as i">     
+           <div class="container">
+            <label class='px-3'>Sub Agenda Item</label>
+             <div class="d-flex px-3">
+              <textarea [(ngModel)]="subItem.subAgenda" name="{{j}}{{i}}subAgendaItem" type= "text" class="form-control" 
+              placeholder="Input Agenda Subitem" rows="1"></textarea>
+            <div class="d-flex align-items-center ml-2"> 
+              <i class="m-2 far fa-trash-alt" (click)=deleteSubAgendaItem(item,subItem)></i>
+              <i class="fas fa-plus" (click)=addSubSubAgendaItem(item,subItem)></i>
+            </div>  
+          </div>    
+          </div>
+        
+         <!--Looping into subOfSubAgenda Array-->
+            <div  class='ml-4' *ngFor="let subOfSubItem of subItem.subOfSubAgendaItems;index as k">  
+              <div class="container">
+              <label class='styleForTextArea'>Sub of Sub Agenda Item</label>
+              <div class="d-flex">
+              <textarea [(ngModel)]="subOfSubItem.subofSubAgenda" name="{{j}}{{i}}{{k}}subOfSubAgendaItem" type= "text" class="form-control " 
+              placeholder="Input Agenda SubofSubitem" rows="1"></textarea>
+              <div class="d-flex ml-2">
+              <i class="m-2 far fa-trash-alt" (click)=deleteSubOfSubAgendaItem(j,i,subOfSubItem)></i>
+              </div>
+            </div>
+            </div>
+          </div> 
+          </div>
+        </div>
+         <div class="col-md-2">
+         <label for="exampleFormControlSelect1">Duration(in minutes):</label>
+        <select required #durationForAgendaItem="ngModel" [(ngModel)]="item.duration" name="{{item.id}}duration" class="form-control">
+          <option *ngFor="let time of ['05','10','15','20','25','30']">{{time}}</option>
+        </select>
+        <!--<div class="alert alert-danger"
+          *ngIf="(durationForAgendaItem.touched && !(durationForAgendaItem=='O5'))">*Duration is required
+          </div>-->
+        </div>
+        <div class="col-md-1">
+          <label>Action:</label>
+        <i class="m-2 far fa-trash-alt" (click)=deleteAgendaItem(item)></i>
+        <i class="fas fa-plus" (click)=addNewSubAgendaItem(item)></i>
+        </div>
+        </div>
+        <button (click)=newAgendaItem()>Add</button>
+        <button (click)=cancelAgendaItemInput()>Cancel</button>
+        
+    </div>
+    <button [disabled]="!subject.valid || !daysForEmailAlert.valid || !date.valid || !HH.valid || !MM.valid || !noon.valid || !facilitatedBy.valid || (!createMeetingModelObject.inlineCheckbox1 && !createMeetingModelObject.inlineCheckbox2
+    &&!createMeetingModelObject.inlineCheckbox3 && !createMeetingModelObject.inlineCheckbox4
+    && !createMeetingModelObject.inlineCheckbox5)" class="btn btn-primary" (click)="submitToSaveMeeting()">Save</button>
+    <button  class="btn" (click)="cancel()">cancel</button>
+  </form>
+  
+</div>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+

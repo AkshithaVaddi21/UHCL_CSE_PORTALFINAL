@@ -1,0 +1,10 @@
+.datatable{
+    width:100%;
+}
+.StyleForSearch{
+    width:100%;
+}
+th.mat-sort-header-sorted {
+    color: black;
+  }
+  .hidden{ visibility: hidden; } .visible{ visibility: visible; }

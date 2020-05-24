@@ -1,0 +1,44 @@
+<div *ngIf="loggedInUserDataFromDB!=null">
+<div *ngIf="loggedInUserDataFromDB.Role=='Admission' || loggedInUserDataFromDB.admissionApplicationReviewer==true">
+<div  class='container-fluid' *ngIf="selectedStudent!=null">
+<p><b>Student name:</b> {{selectedStudent.firstName}} {{selectedStudent.lastName}}</p>
+<p><b>Student Id:</b> {{selectedStudent.studentId}}</p>
+<p><b>GRE-verbal Score:</b> {{selectedStudent.greVerbalScore}}</p>
+<p><b>GRE-Quant Score:</b> {{selectedStudent.greQuantScore}}</p>
+<p><b>GRE-Total Score:</b> {{selectedStudent.greTotalScore}}</p>
+<p><b>GRE-Essay Score:</b> {{selectedStudent.greEssayScore}}</p>
+<p><b>Intended Program:</b> {{selectedStudent.intendedProgram}}</p>
+<p><b>GPA:</b>{{selectedStudent.gpa}}</p>
+<p><b>Status:</b> {{selectedStudent.status}}</p>
+<p><b>Files Available:</b></p>
+<p *ngFor="let file of selectedStudent.downloadApplications; index as i">
+    {{i+1}}.{{file.nameOfFileAsUploaded}}: Click <a style="color:#0000FF;" (click)=open(file.linkToView)>here</a> to view
+                <i class="fas fa-file-download ml-3" (click)=downloadFile(file.uniqueNameForReference,file.linkToView,file.typeOfFile)></i>
+</p>
+<p>Accepts:{{selectedStudent.accepts.length}} Rejects:{{selectedStudent.rejects.length}}</p>
+
+<button *ngIf="loggedInUserDataFromDB.admissionApplicationReviewer==true" (click)="acceptAdmission($event)" value="Accept">Accept</button><button *ngIf="loggedInUserDataFromDB.admissionApplicationReviewer==true" (click)="rejectAdmission()">Reject</button>
+<textarea class='row container-fluid' *ngIf="showCommentSection" rows="4" [(ngModel)]="commentText"></textarea>
+<button *ngIf="showCommentSection" class='row' (click)="saveComment()">Save Comment</button>
+<div *ngIf="showRejectOptions" class='form-group'>
+    <label>Rejection Reasons</label>
+    <select multiple required
+        [(ngModel)]="rejectionReasons" name='rejectionReasons' class='form-control'
+        id="exampleFormControlSelect10">
+        <option *ngFor="let reason of rejectionPossibleReasons" [value]='reason'>{{reason}}</option>
+    </select>
+    <button (click)="saveRejectionReasons($event)" value="Reject">Save Reasons</button>
+</div>
+<p><b>Comments/Reasons</b></p>
+<p *ngFor="let comment of selectedStudent.comments"><b>{{comment.commentedBy}}: {{comment.decision}}--> </b>{{comment.comment}}</p>
+<p *ngFor="let reason of selectedStudent.rejectionReasonsFromModel | keyvalue"><b>{{reason.key}}: </b>{{reason.value}}</p>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+</div>
+<div *ngIf="selectedStudent==null">
+    <h4 style="color: red;" class="px-4">*No Application is Selected</h4>
+</div>
+</div>
+<div *ngIf="loggedInUserDataFromDB.Role!='Admission' && loggedInUserDataFromDB.admissionApplicationReviewer!=true">
+    <h4 style="color: red;" class="px-4">*You do not have access</h4>
+</div>
+</div>

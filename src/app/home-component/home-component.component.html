@@ -1,0 +1,4 @@
+<div class='ml-4' *ngIf="loggedInUserDataFromDB!=null">
+<h1 style="text-align: center; font-weight: bold;" *ngIf="loggedInUserDataFromDB.Role=='Admin' || loggedInUserDataFromDB.Role=='Faculty' || loggedInUserDataFromDB.Role=='Chair' || loggedInUserDataFromDB.Role=='Admission'">Welcome to UHCL-CSE Portal</h1>
+<h6 style="color: red; text-align: center;" *ngIf="loggedInUserDataFromDB.Role!='Admin' && loggedInUserDataFromDB.Role!='Faculty' && loggedInUserDataFromDB.Role!='Chair' && loggedInUserDataFromDB.Role!='Admission'"> *You are an Unauthorized user please logout of the application</h6>
+</div>

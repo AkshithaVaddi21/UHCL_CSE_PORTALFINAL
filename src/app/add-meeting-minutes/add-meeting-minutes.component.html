@@ -1,0 +1,10 @@
+<form class="m-5">
+    <div class="form-group">
+        <label for="exampleFormControlInput1">Meeting Minutes</label>
+        <textarea [(ngModel)]="createMeetingModelObject.meetingMinutes" name="meetingMinutes"
+            type="text" class="form-control" id="exampleFormControlInput1" placeholder="Input Meeting Minutes" rows="10">
+            </textarea>
+    </div>
+    <button (click)="saveMeetingMinutes()">Save</button>
+    <button (click)="cancelInputingMeetingMinutes()">Cancel</button>
+</form>
